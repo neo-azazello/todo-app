@@ -28,7 +28,9 @@ function TodoItem(item) {
       </Col>
 
       <Col lg={5} className="pl-0">
-        <h3 className="edit-todo-input">{todo}</h3>
+        <h3 className="edit-todo-input">
+          {order} {todo}
+        </h3>
       </Col>
       {due ? (
         <Col lg={3} className="m-1 p-0 px-3">

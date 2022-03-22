@@ -22,6 +22,11 @@ function TodoContextProvider(props) {
     setLocalStorage("todo", todos);
   }, [todos]);
 
+  const getLastItemOrderValue = () => {
+    let lastItem = todos.slice(-1).pop();
+    return lastItem ? lastItem.order + 1 : 0;
+  };
+
   const addNewTodo = (e) => {
     const { todo, due } = e.target;
     e.preventDefault();
@@ -32,7 +37,7 @@ function TodoContextProvider(props) {
         todo: todo.value,
         due: due.value,
         complete: false,
-        order: 0,
+        order: getLastItemOrderValue(),
       },
     });
 
