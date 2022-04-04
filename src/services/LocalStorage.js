@@ -4,5 +4,6 @@ export function setLocalStorage(key, value) {
 
 export function getLocalStorage(key) {
   const str = localStorage.getItem(key);
-  return JSON.parse(str) || [];
+  const parsed = JSON.parse(str);
+  return parsed ? parsed.todos : [];
 }

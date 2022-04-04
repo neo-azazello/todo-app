@@ -1,9 +1,13 @@
 import React, { useContext } from "react";
 import { Col, Row } from "react-bootstrap";
-import { TodoContext } from "../../context/TodoContext";
+import { todoContext } from "../../context/TodoContext";
 
 function Statistics() {
-  const { todos } = useContext(TodoContext);
+  const {
+    state: { todos },
+  } = useContext(todoContext);
+
+  console.log(todos);
 
   const completedTodo = todos?.filter((item) => item.complete === true);
   const dueTodos = todos?.filter((item) => new Date(item.due) < new Date());
@@ -13,7 +17,9 @@ function Statistics() {
       <Col>
         <h2 className="text-primary text-center">My ToDo Statistics</h2>
         <p className="text-center">
-          Completed: {completedTodo?.length} | Due: {dueTodos?.length}
+          Completed:{" "}
+          <span data-testid="completed-count">{completedTodo?.length}</span> |
+          Due: <span data-testid="due-todo">{dueTodos?.length}</span>
         </p>
       </Col>
     </Row>

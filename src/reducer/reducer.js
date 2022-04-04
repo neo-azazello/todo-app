@@ -1,46 +1,63 @@
 import { ACTIONS } from "./actionTypes";
 
-export function Reduce(state, action) {
+export function reducer(state, action) {
   switch (action.type) {
     case ACTIONS.ADD_NEW_TODO:
-      return [...state, action.payload];
+      return { ...state, todos: [...state.todos, action.payload] };
 
     case ACTIONS.CHECK_AS_COMPLETE:
-      return state.map((todo) => {
-        if (todo.id === Number(action.payload.id)) {
-          return { ...todo, complete: !todo.complete };
-        }
-        return todo;
-      });
+      return {
+        ...state,
+        todos: state.todos.map((todo) => {
+          if (todo.id === Number(action.payload.id)) {
+            return { ...todo, complete: !todo.complete };
+          }
+          return todo;
+        }),
+      };
 
-    case ACTIONS.EDIT_TODO:
-      return state.map((todo) => {
-        if (todo.id === Number(action.payload.id)) {
-          return { ...todo, ...action.payload };
-        }
-        return todo;
-      });
+    case ACTIONS.SELECT_EDITED_TODO:
+      return {
+        ...state,
+        editedTodo: action.payload,
+      };
+
+    case ACTIONS.UPDATE_SELECTED_TODO:
+      return {
+        ...state,
+        editedTodo: null,
+        todos: state.todos.map((todo) => {
+          if (todo.id === Number(action.payload.id)) {
+            return action.payload;
+          }
+          return todo;
+        }),
+      };
 
     case ACTIONS.DELETE_TODO:
-      return state.filter((todo) => {
-        return todo.id !== action.payload.id;
-      });
+      return {
+        ...state,
+        todos: state.todos.filter((todo) => {
+          return todo.id !== action.payload.id;
+        }),
+      };
 
-    case ACTIONS.MOVE_UP:
-      return state.map((todo) => {
-        if (todo.id === Number(action.payload.id)) {
-          return { ...todo, order: todo.order - 1 };
-        }
-        return todo;
-      });
+    case ACTIONS.MOVE:
+      return {
+        ...state,
+        todos: action.payload,
+      };
 
-    case ACTIONS.MOVE_DOWN:
-      return state.map((todo) => {
-        if (todo.id === Number(action.payload.id)) {
-          return { ...todo, order: todo.order + 1 };
-        }
-        return todo;
-      });
+    case ACTIONS.SET_TODO_MARK_STATUS:
+      return {
+        ...state,
+        todos: state.todos.map((todo) => {
+          if (todo.id === Number(action.payload.id)) {
+            return action.payload;
+          }
+          return todo;
+        }),
+      };
 
     default:
       return state;

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext, useState } from "react";
 import {
   Col,
   Row,
@@ -7,46 +7,64 @@ import {
   Form,
   Button,
 } from "react-bootstrap";
-import { TodoContext } from "../../context/TodoContext";
+import { todoContext } from "../../context/TodoContext";
+import { ACTIONS } from "../../reducer/actionTypes";
 
 function UpdateForm() {
-  const { updateTodo, cancelOperation, todoId, todos } =
-    useContext(TodoContext);
+  const {
+    state: { editedTodo },
+    dispatch,
+  } = useContext(todoContext);
 
-  const oneTodo = todos.filter((item) => item.id === todoId);
-  const [item] = oneTodo;
+  const [updatedTodo, setUpdatedTodo] = useState({
+    todo: editedTodo?.todo,
+    due: editedTodo?.due,
+  });
 
-  const todoInputRef = useRef();
-  const dueInputRef = useRef();
+  const handleChange = ({ target: { name, value } }) => {
+    setUpdatedTodo((prev) => ({ ...prev, [name]: value }));
+  };
 
-  useEffect(() => {
-    todoInputRef.current.value = item.todo;
-    dueInputRef.current.value = item.due;
-  }, [item]);
+  const handleCancel = () => {
+    dispatch({ type: ACTIONS.SELECT_EDITED_TODO, payload: null });
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch({
+      type: ACTIONS.UPDATE_SELECTED_TODO,
+      payload: {
+        ...editedTodo,
+        ...updatedTodo,
+      },
+    });
+  };
 
   return (
     <Row className="m-1 p-1">
       <Col lg="11" className="mx-auto">
-        <Form onSubmit={updateTodo}>
+        <Form onSubmit={handleSubmit}>
           <Row className="bg-white rounded shadow-sm p-2 add-todo-wrapper align-items-center justify-content-center">
             <Col>
               <InputGroup size="lg">
                 <FormControl
+                  value={updatedTodo.todo}
+                  onChange={handleChange}
                   className="border-0 add-todo-input bg-transparent rounded"
                   name="todo"
                   required
-                  ref={todoInputRef}
                 />
               </InputGroup>
             </Col>
             <Col className="col-auto m-0 px-2 d-flex align-items-center">
               <InputGroup size="lg">
                 <FormControl
+                  value={updatedTodo.due}
+                  onChange={handleChange}
                   type="date"
                   title="Set a due date"
                   className="border-0 bg-transparent p-1"
                   name="due"
-                  ref={dueInputRef}
                 />
               </InputGroup>
             </Col>
@@ -58,7 +76,7 @@ function UpdateForm() {
                 type="button"
                 variant="warning"
                 className="ml-1"
-                onClick={() => cancelOperation()}
+                onClick={handleCancel}
               >
                 Cancel
               </Button>

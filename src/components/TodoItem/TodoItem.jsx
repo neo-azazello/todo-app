@@ -1,12 +1,9 @@
-import React, { useContext } from "react";
-import { Col, Row, InputGroup } from "react-bootstrap";
-import { TodoContext } from "../../context/TodoContext";
+import React from "react";
+import { Col, InputGroup, Row } from "react-bootstrap";
 import { longDateFormat } from "../../services/date";
 
-function TodoItem(item) {
-  const { todo, due, complete, id, order, length } = item;
-  const { markAsDone, getTodoId, deleteTodo, moveUp, moveDown } =
-    useContext(TodoContext);
+function TodoItem({ todo, todoOperations, isFirstItem, isLastItem }) {
+  const { todo: label, due, complete, id, order } = todo;
 
   const formatted = longDateFormat(due);
 
@@ -21,14 +18,15 @@ function TodoItem(item) {
             type="checkbox"
             checked={complete}
             value={id}
-            onClick={markAsDone}
-            onChange={(e) => {}}
+            onChange={() => todoOperations.setTodoMarkStatus(todo)}
           />
         </InputGroup>
       </Col>
 
       <Col lg={5} className="pl-0">
-        <h3 className="edit-todo-input">{todo}</h3>
+        <h3 className="edit-todo-input" title={label}>
+          {label}
+        </h3>
       </Col>
       {due ? (
         <Col lg={3} className="m-1 p-0 px-3">
@@ -53,7 +51,10 @@ function TodoItem(item) {
           ""
         ) : (
           <div className="row d-flex align-items-center justify-content-end">
-            <h5 className="m-0 p-0 px-2" onClick={() => getTodoId(id)}>
+            <h5
+              className="m-0 p-0 px-2"
+              onClick={() => todoOperations.setEditedTodo(todo)}
+            >
               <i
                 className="fa fa-pencil text-info btn m-0 p-0"
                 data-toggle="tooltip"
@@ -61,7 +62,10 @@ function TodoItem(item) {
                 title="Edit todo"
               ></i>
             </h5>
-            <h5 className="m-0 p-0 px-2" onClick={() => deleteTodo(id)}>
+            <h5
+              className="m-0 p-0 px-2"
+              onClick={() => todoOperations.deleteTodo(id)}
+            >
               <i
                 className="fa fa-trash-o text-danger btn m-0 p-0"
                 data-toggle="tooltip"
@@ -69,7 +73,7 @@ function TodoItem(item) {
                 title="Delete todo"
               ></i>
             </h5>
-            {order <= 0 ? (
+            {isFirstItem ? (
               <h5 className="m-0 p-0 px-2">
                 <i
                   className="fa fa-chevron-up text-primary btn disabled m-0 p-0"
@@ -77,7 +81,10 @@ function TodoItem(item) {
                 ></i>
               </h5>
             ) : (
-              <h5 className="m-0 p-0 px-2" onClick={() => moveUp(id)}>
+              <h5
+                className="m-0 p-0 px-2"
+                onClick={() => todoOperations.move(order, order - 1)}
+              >
                 <i
                   className="fa fa-chevron-up text-primary btn m-0 p-0"
                   title="Move up"
@@ -85,7 +92,7 @@ function TodoItem(item) {
               </h5>
             )}
 
-            {order + 1 >= length ? (
+            {isLastItem ? (
               <h5 className="m-0 p-0 px-2">
                 <i
                   className="fa fa-chevron-down disabled text-warning btn m-0 p-0"
@@ -93,7 +100,10 @@ function TodoItem(item) {
                 ></i>
               </h5>
             ) : (
-              <h5 className="m-0 p-0 px-2" onClick={(e) => moveDown(id)}>
+              <h5
+                className="m-0 p-0 px-2"
+                onClick={(e) => todoOperations.move(order, order + 1)}
+              >
                 <i
                   className="fa fa-chevron-down text-warning btn m-0 p-0"
                   title="Move down"
