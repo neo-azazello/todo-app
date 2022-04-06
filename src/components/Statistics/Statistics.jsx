@@ -7,8 +7,6 @@ function Statistics() {
     state: { todos },
   } = useContext(todoContext);
 
-  console.log(todos);
-
   const completedTodo = todos?.filter((item) => item.complete === true);
   const dueTodos = todos?.filter((item) => new Date(item.due) < new Date());
 
