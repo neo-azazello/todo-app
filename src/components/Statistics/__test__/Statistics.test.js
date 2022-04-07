@@ -1,8 +1,9 @@
 import { render, screen } from "@testing-library/react";
 import Statistics from "../Statistics";
 import TodoContextProvider from "../../../context/TodoContext";
+import { setLocalStorage } from "../../../services/LocalStorage";
 
-const todos = [
+const items = [
   {
     todo: "Take a note",
     due: "2022-04-01",
@@ -28,6 +29,12 @@ const todos = [
 
 describe("Testing Statistics Component", () => {
   it("should return valid complete amount and due tasks count", () => {
+    setLocalStorage("todo", {
+      todos: items,
+      editedTodo: null,
+      lastTodoItemOrder: 0,
+    });
+
     render(
       <TodoContextProvider>
         <Statistics />
@@ -39,5 +46,7 @@ describe("Testing Statistics Component", () => {
 
     const dueTaskCount = screen.getByTestId("due-todo");
     expect(dueTaskCount).toHaveTextContent(1);
+
+    setLocalStorage(null);
   });
 });
